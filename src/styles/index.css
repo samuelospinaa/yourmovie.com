@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.lateral-left,
+.lateral-right {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  height: 200%;
+  width: 200px;
+  animation: slide-vertical 15s linear infinite;
+  z-index: -1; /* Para que no tape el contenido principal */
+}
+
+.lateral-left {
+  left: 100px;
+  animation-direction: normal;
+}
+
+.lateral-right {
+  right: 100px;
+  animation-direction: reverse;
+}
+
+.lateral-poster {
+  width: 150px;
+  height: 225px;
+  margin: 10px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.lateral-poster:hover {
+  transform: scale(1.1);
+}
+
+@keyframes slide-vertical {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(-150%);
+  }
+}
+
+.gradient-overlay-left,
+.gradient-overlay-right {
+  position: fixed;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+main {
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+h1 {
+  filter: drop-shadow(0 0 0.75rem rgb(157, 208, 255));
+}
+
+label,
+input {
+  margin: 0.25rem;
+}
+
+input,
+button {
+  font-family: "Poppins", sans-serif;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+button {
+  margin: 0.5rem;
+  width: 100px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: ease-in-out 0.5s;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+#other-search {
+  width: 150px;
+  display: flex;
+  margin-top: 50px;
+}
+
+.overview {
+  width: 80%;
+  margin: 1rem auto;
+  font-size: 1rem;
+  color: #333;
+}
+
+#movie-view {
+  font-family: "Poppins", sans-serif;
+  margin: 1.5rem;
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr 1.6fr;
+  grid-template-rows: repeat(4, auto);
+  gap: 10px;
+  grid-template-areas:
+    "Image Title"
+    "Image overview"
+    "Image overview"
+    "Image data";
+}
+
+#movie-view .image {
+  grid-area: Image;
+  max-width: 100%;
+  height: auto;
+}
+
+#movie-view .title {
+  grid-area: Title;
+}
+
+#movie-view .overview {
+  grid-area: overview;
+}
+
+#movie-view .data {
+  grid-area: data;
+}
+
+#moview-view .data p {
+  margin: 5px;
+}
+
+article {
+  display: grid;
+  justify-items: center;
+}
+
+#subtitle {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.5rem;
+  color: #333;
+}
