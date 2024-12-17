@@ -33,7 +33,6 @@ function createView(data) {
   divView.innerHTML = htmlView;
 
   sectionView.appendChild(divView);
-  createViewMovies(data);
 
   // button that let the user search for another movie
   const buttonAnother = $("#other-search");
@@ -47,23 +46,6 @@ function createView(data) {
   mainSection.style.display = "none";
   leftAnimation.style.display = "none";
   rightAnimation.style.display = "none";
-}
-
-function createViewMovies(data) {
-  const baseUrl = "https://image.tmdb.org/t/p/w500";
-  const movie = data.results.slice(1);
-  const htmlStructure = `
-  <div class="container">
-  <img src="${baseUrl}${movie.poster_path}" alt="${movie.title}" class="image" style="max-width: 50; border-radius: 5x;">
-  <p>${movie.title}</p>
-  </div>`;
-
-  movie.forEach((movie) => {
-    const div = document.createElement("div");
-    div.className = "movie";
-    div.innerHTML = htmlStructure;
-    article.appendChild(div);
-  });
 }
 
 function saveSearch() {
