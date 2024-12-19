@@ -1,5 +1,67 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
+@media only screen and (max-width: 975px) {
+  .lateral-left,
+  .lateral-right {
+    display: none !important;
+  }
+
+  .lateral-left-left,
+  .lateral-right-right {
+    width: 100% !important;
+    height: 200px !important;
+    animation: slide-horizontal 15s linear infinite !important;
+    flex-direction: row !important;
+  }
+
+  .lateral-left-left {
+    top: -100px !important;
+    animation-direction: reverse !important;
+  }
+
+  .lateral-right-right {
+    bottom: -100px !important;
+    animation-direction: normal !important;
+  }
+
+  .gradient-overlay-left {
+    position: fixed !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 200px !important;
+    left: 0 !important;
+    background: linear-gradient(
+      to bottom,
+      rgba(240, 240, 240, 1) 0%,
+      rgba(240, 240, 240, 0) 100%
+    ) !important;
+  }
+
+  .gradient-overlay-right {
+    position: fixed !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 200px !important;
+    right: 0 !important; /* Correct positioning */
+    background: linear-gradient(
+      to top,
+      rgba(240, 240, 240, 1) 0%,
+      rgba(240, 240, 240, 0) 100%
+    ) !important;
+    pointer-events: none; /* Prevent interaction */
+    z-index: 1; /* Ensure it appears above relevant elements */
+  }
+
+  @keyframes slide-horizontal {
+    0% {
+      transform: translateX(-50%);
+    }
+    100% {
+      transform: translateX(-150%);
+    }
+  }
+}
+
 .title {
   font-family: "Poppins", sans-serif;
   font-size: 3rem;
@@ -174,7 +236,7 @@ button:hover {
   grid-template-areas:
     "Image Title"
     "Image overview"
-    "Image overview"
+    "Image platforms"
     "Image data";
 }
 
@@ -192,12 +254,24 @@ button:hover {
   grid-area: overview;
 }
 
+#movie-view .platforms-view {
+  grid-area: platforms;
+}
+
 #movie-view .data {
   grid-area: data;
 }
 
 #moview-view .data p {
   margin: 5px;
+}
+
+.platforms {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
 }
 
 article {

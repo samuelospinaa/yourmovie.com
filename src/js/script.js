@@ -1,61 +1,68 @@
 const $ = (selector) => document.querySelector(selector);
 
 const API_KEY = "0f1e85c7df926b373c71b2470adc50c7";
-const BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
-const DEFAULT_IMAGE = "./public/th.png";
+const button = $("#search-button");
+const sectionView = $("#section-movie-view");
+const mainSection = $("#main-section");
+const article = $("article");
+const leftAnimation = $(".lateral-left");
+const rightAnimation = $(".lateral-right");
 
-const elements = {
-  button: $("#search-button"),
-  sectionView: $("#section-movie-view"),
-  mainSection: $("#main-section"),
-  article: $("article"),
-  leftAnimation: $(".lateral-left"),
-  rightAnimation: $(".lateral-right"),
-};
+function createView(movieData, platformData) {
+  console.log("Platform data:", platformData); // Debug log
 
-const PLATFORM_IMAGES = {
-  Netflix: "../public/netflix.svg",
-  "Amazon Prime": "../public/amazon.svg",
-  "Disney+": "../public/disney.svg",
-  "HBO Max": "../public/hbologo.svg",
-};
-
-function getStreamingPlatforms(platforms) {
-  if (!platforms || !platforms.length) return [];
-
-  return platforms
-    .filter((platform) => platform.streamingType === "subscription")
-    .map((platform) => ({
-      service: platform.service,
-      image: PLATFORM_IMAGES[platform.service] || DEFAULT_IMAGE,
-    }));
-}
-
-function createPlatformsList(platforms) {
-  if (!platforms.length) return "<p>No subscription platforms available</p>";
-
-  return `
-    <h3>Available on:</h3>
-    <ul>
-      ${platforms
-        .map(
-          (platform) =>
-            `<li><img src="${platform.image}" alt="${platform.service}"></li>`
-        )
-        .join("")}
-    </ul>
-  `;
-}
-
-function createView(movieData, streamingData) {
   const movie = movieData.results[0];
-  const platforms = streamingData
-    ? getStreamingPlatforms(streamingData[0]?.streamingInfo?.us)
-    : [];
-
+  const baseUrl = "https://image.tmdb.org/t/p/w500";
+  const notImageRoute = "../../public/th.png";
   const imageUrl = movie.poster_path
-    ? `${BASE_IMAGE_URL}${movie.poster_path}`
-    : DEFAULT_IMAGE;
+    ? `${baseUrl}${movie.poster_path}`
+    : notImageRoute;
+
+  // Get subscription platforms
+  let availablePlatforms = [];
+  if (platformData?.result?.[0]?.streamingInfo?.us) {
+    availablePlatforms = platformData.result[0].streamingInfo.us
+      .filter((item) => item.streamingType === "subscription")
+      .map((item) => item.service);
+  }
+
+  // Remove duplicates
+  availablePlatforms = [...new Set(availablePlatforms)];
+
+  // Platform image mapping
+  const getLogoPath = (platform) => {
+    switch (platform.toLowerCase()) {
+      case "netflix":
+        return "../../public/netflix.svg";
+      case "prime":
+        return "../../public/amazon.svg";
+      case "disney":
+        return "../../public/disney.svg";
+      case "hbo":
+        return "../../public/hbologo.svg";
+      case "hulu":
+        return "../../public/hulu.svg";
+      case "apple":
+        return "../../public/appletv.svg";
+      default:
+        return notImageRoute;
+    }
+  };
+
+  // Create platforms HTML
+  const platformsHTML = availablePlatforms.length
+    ? availablePlatforms
+        .map(
+          (platform) => `
+          <li>
+            <img src="${getLogoPath(
+              platform
+            )}" alt="${platform}" style="width: 50px; height: 50px;">
+          </li>
+        `
+        )
+        .join("")
+    : "<p>No subscription platforms available</p>";
 
   const htmlView = `
     <div id="movie-view">
@@ -68,7 +75,10 @@ function createView(movieData, streamingData) {
       <h2 class="title">${movie.title}</h2>
       <p class="overview">${movie.overview}</p>
       <div class="platforms">
-        ${createPlatformsList(platforms)}
+        <h3>Available on:</h3>
+        <ul style="list-style: none; padding: 0;">
+          ${platformsHTML}
+        </ul>
       </div>
       <div class="data">
         <p><strong>Rating: ${movie.vote_average}</strong></p>
@@ -78,29 +88,18 @@ function createView(movieData, streamingData) {
     </div>
   `;
 
-  elements.sectionView.innerHTML = htmlView;
-  setupOtherSearchButton();
-  hideMainElements();
-}
+  sectionView.innerHTML = htmlView;
 
-function setupOtherSearchButton() {
   const buttonAnother = $("#other-search");
   if (buttonAnother) {
-    buttonAnother.addEventListener("click", () => window.location.reload());
+    buttonAnother.addEventListener("click", () => {
+      window.location.reload();
+    });
   }
-}
 
-function hideMainElements() {
-  elements.mainSection.style.display = "none";
-  elements.leftAnimation.style.display = "none";
-  elements.rightAnimation.style.display = "none";
-}
-
-function validateSearch(search) {
-  if (!search?.trim()) {
-    throw new Error("Please enter a movie title");
-  }
-  return search.trim();
+  mainSection.style.display = "none";
+  leftAnimation.style.display = "none";
+  rightAnimation.style.display = "none";
 }
 
 async function fetchMovie(search) {
@@ -142,31 +141,38 @@ async function fetchPlatforms(search) {
     },
   };
 
-  const response = await fetch(
-    `https://streaming-availability.p.rapidapi.com/search/title?title=${encodeURIComponent(
-      search
-    )}&country=us&show_type=movie&output_language=en`,
-    options
-  );
+  try {
+    const response = await fetch(
+      `https://streaming-availability.p.rapidapi.com/search/title?title=${encodeURIComponent(
+        search
+      )}&country=us&show_type=movie&output_language=en`,
+      options
+    );
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch platform data: ${response.statusText}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch platform data: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching platforms:", error);
+    return null;
   }
-
-  return response.json();
 }
 
-async function handleSearch() {
+async function saveSearch() {
   try {
-    const searchInput = $("#search");
-    const search = validateSearch(searchInput.value);
+    const search = $("#search").value;
+
+    if (!search) {
+      alert("Please enter a movie title");
+      return;
+    }
 
     localStorage.setItem("movieTitle", search);
 
-    const [movieData, platformData] = await Promise.all([
-      fetchMovie(search),
-      fetchPlatforms(search),
-    ]);
+    const movieData = await fetchMovie(search);
+    const platformData = await fetchPlatforms(search);
 
     createView(movieData, platformData);
   } catch (error) {
@@ -175,4 +181,4 @@ async function handleSearch() {
   }
 }
 
-elements.button.addEventListener("click", handleSearch);
+button.addEventListener("click", saveSearch);
