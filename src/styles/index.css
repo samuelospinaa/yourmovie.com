@@ -40,16 +40,17 @@
   .gradient-overlay-right {
     position: fixed !important;
     bottom: 0 !important;
+    top: auto !important;
     width: 100% !important;
     height: 200px !important;
-    right: 0 !important; /* Correct positioning */
+    right: 0 !important;
     background: linear-gradient(
       to top,
       rgba(240, 240, 240, 1) 0%,
       rgba(240, 240, 240, 0) 100%
     ) !important;
-    pointer-events: none; /* Prevent interaction */
-    z-index: 1; /* Ensure it appears above relevant elements */
+    pointer-events: none;
+    z-index: 1;
   }
 
   @keyframes slide-horizontal {
@@ -76,13 +77,12 @@
   height: 200%;
   width: 200px;
   animation: slide-vertical 15s linear infinite;
-  z-index: -1; /* Para que no tape el contenido principal */
+  z-index: -1;
 }
 
 .gradient-overlay-left,
 .gradient-overlay-right {
   position: fixed;
-  top: 0;
   width: 200px;
   height: 100%;
   pointer-events: none;

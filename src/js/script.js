@@ -5,8 +5,12 @@ const button = $("#search-button");
 const sectionView = $("#section-movie-view");
 const mainSection = $("#main-section");
 const article = $("article");
+//animations
 const leftAnimation = $(".lateral-left");
 const rightAnimation = $(".lateral-right");
+//overlays
+const overlayRight = $(".overlay-gradient-right");
+const overlayLeft = $(".overlay-gradient-left");
 
 function createView(movieData, platformData) {
   console.log("Platform data:", platformData); // Debug log
@@ -26,7 +30,6 @@ function createView(movieData, platformData) {
       .map((item) => item.service);
   }
 
-  // Remove duplicates
   availablePlatforms = [...new Set(availablePlatforms)];
 
   // Platform image mapping
