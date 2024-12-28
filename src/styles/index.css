@@ -284,3 +284,29 @@ article {
   font-size: 1.5rem;
   color: #333;
 }
+
+.other-movies {
+  margin-left: 135px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.other-movies-container {
+  display: flex;
+  gap: 25px;
+  justify-items: center;
+}
+
+.other-movie {
+  max-width: 175px;
+  border-radius: 10px;
+  transition: ease-in-out 0.5s;
+}
+
+.other-movie:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}

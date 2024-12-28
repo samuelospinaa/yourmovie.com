@@ -13,8 +13,6 @@ const overlayRight = $(".overlay-gradient-right");
 const overlayLeft = $(".overlay-gradient-left");
 
 function createView(movieData, platformData) {
-  console.log("Platform data:", platformData); // Debug log
-
   const movie = movieData.results[0];
   const baseUrl = "https://image.tmdb.org/t/p/w500";
   const notImageRoute = "../../public/th.png";
@@ -88,6 +86,13 @@ function createView(movieData, platformData) {
         <p><strong>Release date: ${movie.release_date}</strong></p>
         <button id="other-search">Search another movie</button>
       </div>
+      <div class="other-movies">
+      <h3>Other movies you might like:</h3>
+      <div class="other-movies-container">
+        <img src="https://image.tmdb.org/t/p/w500${movieData.results[1].poster_path}" alt="${movieData.results[1].title}" class="other-movie">
+        <img src="https://image.tmdb.org/t/p/w500${movieData.results[2].poster_path}" alt="${movieData.results[2].title}" class="other-movie">
+        <img src="https://image.tmdb.org/t/p/w500${movieData.results[3].poster_path}" alt="${movieData.results[3].title}" class="other-movie">
+      </div>
     </div>
   `;
 
@@ -97,6 +102,26 @@ function createView(movieData, platformData) {
   if (buttonAnother) {
     buttonAnother.addEventListener("click", () => {
       window.location.reload();
+    });
+  }
+
+  //handle if the user click in another movie
+  //movies that maybe the user likes, we need to recover each movie in this class
+  const otherMovies = document.querySelectorAll(".other-movie");
+  if (otherMovies) {
+    otherMovies.forEach((movie) => {
+      movie.addEventListener("click", async (e) => {
+        try {
+          const [movieData, platformData] = await Promise.all([
+            fetchMovie(e.target.alt),
+            fetchPlatforms(e.target.alt),
+          ]);
+
+          createOtherView(movieData, platformData);
+        } catch (error) {
+          console.error("Error al cargar los datos:", error);
+        }
+      });
     });
   }
 
@@ -181,6 +206,90 @@ async function saveSearch() {
   } catch (error) {
     alert(error.message);
     console.error("Search error:", error);
+  }
+}
+
+function createOtherView(movieData, platformData) {
+  const notImageRoute = "../../public/th.png";
+  const movie = movieData.results[0];
+  const baseUrl = "https://image.tmdb.org/t/p/w500";
+  const imageUrl = movie.poster_path
+    ? `${baseUrl}${movie.poster_path}`
+    : notImageRoute;
+
+  // Get subscription platforms
+  let availablePlatforms = [];
+  if (platformData?.result?.[0]?.streamingInfo?.us) {
+    availablePlatforms = platformData.result[0].streamingInfo.us
+      .filter((item) => item.streamingType === "subscription")
+      .map((item) => item.service);
+  }
+
+  availablePlatforms = [...new Set(availablePlatforms)];
+
+  // Platform image mapping
+  const getLogoPath = (platform) => {
+    switch (platform.toLowerCase()) {
+      case "netflix":
+        return "../../public/netflix.svg";
+      case "prime":
+        return "../../public/amazon.svg";
+      case "disney":
+        return "../../public/disney.svg";
+      case "hbo":
+        return "../../public/hbologo.svg";
+      case "hulu":
+        return "../../public/hulu.svg";
+      case "apple":
+        return "../../public/appletv.svg";
+      default:
+        return notImageRoute;
+    }
+  };
+
+  // Create platforms HTML
+  const platformsHTML = availablePlatforms.length
+    ? availablePlatforms
+        .map(
+          (platform) => `
+            <li>
+              <img src="${getLogoPath(
+                platform
+              )}" alt="${platform}" style="width: 50px; height: 50px;">
+            </li>
+          `
+        )
+        .join("")
+    : "<p>No subscription platforms available</p>";
+
+  const htmlCode = `<div id="movie-view">
+      <img 
+        src="${imageUrl}" 
+        alt="${movie.title}" 
+        class="image" 
+        style="max-width: 400px; border-radius: 10px; margin-top: 25px;"
+      >
+      <h2 class="title">${movie.title}</h2>
+      <p class="overview">${movie.overview}</p>
+      <div class="platforms">
+        <h3>Available on:</h3>
+        <ul style="list-style: none; padding: 0;">
+          ${platformsHTML}
+        </ul>
+      </div>
+      <div class="data">
+        <p><strong>Rating: ${movie.vote_average}</strong></p>
+        <p><strong>Release date: ${movie.release_date}</strong></p>
+        <button id="other-search">Search another movie</button>
+      </div>`;
+
+  sectionView.innerHTML = htmlCode;
+
+  const buttonAnother = $("#other-search");
+  if (buttonAnother) {
+    buttonAnother.addEventListener("click", () => {
+      window.location.reload();
+    });
   }
 }
 
