@@ -8,6 +8,8 @@ const article = $("article");
 //animations
 const leftAnimation = $(".lateral-left");
 const rightAnimation = $(".lateral-right");
+const leftSecondAnimation = $(".lateral-left-left");
+const rightSecondAnimation = $(".lateral-right-right");
 //overlays
 const overlayRight = $(".overlay-gradient-right");
 const overlayLeft = $(".overlay-gradient-left");
@@ -46,7 +48,7 @@ function createView(movieData, platformData) {
       case "apple":
         return "../../public/appletv.svg";
       default:
-        return notImageRoute;
+        return platform.service;
     }
   };
 
@@ -97,7 +99,6 @@ function createView(movieData, platformData) {
   `;
 
   sectionView.innerHTML = htmlView;
-
   const buttonAnother = $("#other-search");
   if (buttonAnother) {
     buttonAnother.addEventListener("click", () => {
