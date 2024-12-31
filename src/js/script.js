@@ -5,14 +5,16 @@ const button = $("#search-button");
 const sectionView = $("#section-movie-view");
 const mainSection = $("#main-section");
 const article = $("article");
+const inputContainer = $("#main-input-container");
+const mainInput = $("#search");
 //animations
 const leftAnimation = $(".lateral-left");
 const rightAnimation = $(".lateral-right");
 const leftSecondAnimation = $(".lateral-left-left");
 const rightSecondAnimation = $(".lateral-right-right");
 //overlays
-const overlayRight = $(".overlay-gradient-right");
-const overlayLeft = $(".overlay-gradient-left");
+const overlayRight = $(".gradient-overlay-right");
+const overlayLeft = $(".gradient-overlay-left");
 
 function createView(movieData, platformData) {
   const movie = movieData.results[0];
@@ -82,8 +84,6 @@ function createView(movieData, platformData) {
         <ul style="list-style: none; padding: 0;">
           ${platformsHTML}
         </ul>
-      </div>
-      <div class="data">
         <p><strong>Rating: ${movie.vote_average}</strong></p>
         <p><strong>Release date: ${movie.release_date}</strong></p>
         <button id="other-search">Search another movie</button>
@@ -126,9 +126,18 @@ function createView(movieData, platformData) {
     });
   }
 
-  mainSection.style.display = "none";
-  leftAnimation.style.display = "none";
-  rightAnimation.style.display = "none";
+  //hide elements and animations for movie view
+  [
+    mainSection,
+    leftAnimation,
+    rightAnimation,
+    leftSecondAnimation,
+    rightSecondAnimation,
+    overlayRight,
+    overlayLeft,
+  ].forEach((element) => {
+    element.style.display = "none";
+  });
 }
 
 async function fetchMovie(search) {
@@ -193,12 +202,23 @@ async function saveSearch() {
   try {
     const search = $("#search").value;
 
+    //if the user introduces an empty string or dont introduce anything
     if (!search) {
-      alert("Please enter a movie title");
+      //create error message
+      let errorText = document.createElement("p");
+      errorText.id = "error-text";
+
+      errorText.innerHTML = "Please enter a movie title";
+      inputContainer.appendChild(errorText);
+      mainInput.style.borderColor = "red";
+
+      //the message will be removed after 3 seconds
+      setTimeout(() => {
+        errorText.remove();
+        mainInput.style.borderColor = "black";
+      }, 3000);
       return;
     }
-
-    localStorage.setItem("movieTitle", search);
 
     const movieData = await fetchMovie(search);
     const platformData = await fetchPlatforms(search);
@@ -277,8 +297,6 @@ function createOtherView(movieData, platformData) {
         <ul style="list-style: none; padding: 0;">
           ${platformsHTML}
         </ul>
-      </div>
-      <div class="data">
         <p><strong>Rating: ${movie.vote_average}</strong></p>
         <p><strong>Release date: ${movie.release_date}</strong></p>
         <button id="other-search">Search another movie</button>
