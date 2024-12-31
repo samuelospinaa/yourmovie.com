@@ -7,6 +7,7 @@ const mainSection = $("#main-section");
 const article = $("article");
 const inputContainer = $("#main-input-container");
 const mainInput = $("#search");
+const backgroundView = $(".dynamic-background");
 //animations
 const leftAnimation = $(".lateral-left");
 const rightAnimation = $(".lateral-right");
@@ -138,6 +139,8 @@ function createView(movieData, platformData) {
   ].forEach((element) => {
     element.style.display = "none";
   });
+
+  backgroundView.style.display = "block";
 }
 
 async function fetchMovie(search) {
@@ -164,7 +167,20 @@ async function fetchMovie(search) {
   const data = await response.json();
 
   if (!data.results?.length) {
-    throw new Error("Movie not found");
+    //create error message
+    let errorText = document.createElement("p");
+    errorText.className = "error-text";
+
+    errorText.innerHTML = "Movie not found";
+    inputContainer.appendChild(errorText);
+    mainInput.style.borderColor = "red";
+
+    //the message will be removed after 3 seconds
+    setTimeout(() => {
+      errorText.remove();
+      mainInput.style.borderColor = "black";
+    }, 3000);
+    return;
   }
 
   return data;
@@ -206,7 +222,7 @@ async function saveSearch() {
     if (!search) {
       //create error message
       let errorText = document.createElement("p");
-      errorText.id = "error-text";
+      errorText.className = "error-text";
 
       errorText.innerHTML = "Please enter a movie title";
       inputContainer.appendChild(errorText);
