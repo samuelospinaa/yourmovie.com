@@ -20,7 +20,7 @@ const overlayLeft = $(".gradient-overlay-left");
 function createView(movieData, platformData) {
   const movie = movieData.results[0];
   const baseUrl = "https://image.tmdb.org/t/p/w500";
-  const notImageRoute = "../../public/th.png";
+  const notImageRoute = "./public/th.png";
   const imageUrl = movie.poster_path
     ? `${baseUrl}${movie.poster_path}`
     : notImageRoute;
@@ -39,19 +39,19 @@ function createView(movieData, platformData) {
   const getLogoPath = (platform) => {
     switch (platform.toLowerCase()) {
       case "netflix":
-        return "../../public/netflix.svg";
+        return "./public/netflix.svg";
       case "prime":
-        return "../../public/amazon.svg";
+        return "./public/amazon.svg";
       case "disney":
-        return "../../public/disney.svg";
+        return "./public/disney.svg";
       case "hbo":
-        return "../../public/hbologo.svg";
+        return "./public/hbologo.svg";
       case "hulu":
-        return "../../public/hulu.svg";
+        return "./public/hulu.svg";
       case "apple":
-        return "../../public/appletv.svg";
+        return "./public/appletv.svg";
       case "peacock":
-        return "../../public/peacock2.png";
+        return "./public/peacock2.png";
       default:
         return platform.service;
     }
@@ -249,7 +249,7 @@ async function saveSearch() {
 }
 
 function createOtherView(movieData, platformData) {
-  const notImageRoute = "../../public/th.png";
+  const notImageRoute = "./public/th.png";
   const movie = movieData.results[0];
   const baseUrl = "https://image.tmdb.org/t/p/w500";
   const imageUrl = movie.poster_path
