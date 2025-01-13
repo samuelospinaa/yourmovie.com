@@ -50,6 +50,8 @@ function createView(movieData, platformData) {
         return "../../public/hulu.svg";
       case "apple":
         return "../../public/appletv.svg";
+      case "peacock":
+        return "../../public/peacock2.png";
       default:
         return platform.service;
     }
